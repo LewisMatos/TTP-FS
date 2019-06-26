@@ -6,8 +6,12 @@ import Amplify from 'aws-amplify';
 import awsconfig from './aws-exports';
 import * as serviceWorker from './serviceWorker';
 
-
-Amplify.configure(awsconfig);
+Amplify.configure({
+  ...awsconfig,
+  Analytics: {
+    disabled: true,
+  },
+});
 
 ReactDOM.render(<App />, document.getElementById('root'));
 

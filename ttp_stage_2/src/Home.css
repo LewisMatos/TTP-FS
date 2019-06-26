@@ -1,0 +1,49 @@
+.Home-list {
+  display: flex;
+  flex-flow: column;
+  width: 30vw;
+  padding:0;
+  margin: 1rem 10rem;
+}
+
+.row {
+  display: flex;
+  padding: 0.5rem;
+  justify-content: space-between;
+  margin-top: 1rem;
+  color: white;
+  list-style: none;
+  border-bottom: 1px solid grey;
+}
+.row > li {
+  text-align: center;
+  padding: 1rem;
+  font-size: 1.5rem;
+  color: white;
+}
+.row > li:last-child {
+  text-align: end;
+}
+
+.Home-header > h1 {
+  font-size: 3rem;
+  color: white;
+  width: 40rem;
+  margin: 1rem 10rem;
+}
+
+.Home-portfolio{
+    display:flex;
+    flex-direction: row;
+}
+
+.Home-form{
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.Home-form  input,button{
+    font-size: 1.2rem;
+    margin:1rem;
+}

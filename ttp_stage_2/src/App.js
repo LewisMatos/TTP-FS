@@ -1,11 +1,52 @@
 import React, { Component } from 'react';
 import { Authenticator } from 'aws-amplify-react';
+import { API, graphqlOperation } from 'aws-amplify';
+import { createUser } from './graphql/mutations';
+import { getUser } from './graphql/queries';
 import Home from './Home';
 import './App.css';
 
 class App extends Component {
   state = {
     authState: '',
+    data: {},
+  };
+
+  handleStateChange = (authState,data) => {
+    this.setState({ authState, data });
+      if (authState === 'signedIn') {
+        this.checkIfUserExists();
+      }
+  };
+
+  checkIfUserExists = async () => {
+    const { sub } = this.state.data.attributes;
+    const input = { id: sub };
+    try {
+      const response = await API.graphql(graphqlOperation(getUser, input));
+      const exists = response.data.getUser;
+      if (!exists) {
+        this.createUser();
+      } else {
+        // console.log('me:', response);
+      }
+    } catch (err) {
+      console.log('error fetching user: ', err);
+    }
+  };
+
+  createUser = async () => {
+    const { attributes, username } = this.state.data;
+    const input = {
+      id: attributes.sub,
+      name: username,
+      cash: 5000,
+    };
+    try {
+      await API.graphql(graphqlOperation(createUser, { input }));
+    } catch (err) {
+      console.log('Error creating user! :', err);
+    }
   };
 
   signUpConfig = {
@@ -43,13 +84,12 @@ class App extends Component {
       <div>
         <section>
           {authState !== 'signedIn' && (
-            <div class="App-header">
-              <div class="App-header-text"> Stock Portfolio </div>
+            <div className="App-header">
+              <div className="App-header-text"> Stock Portfolio </div>
             </div>
           )}
-          <Authenticator signUpConfig={this.signUpConfig} onStateChange={authState => this.setState({ authState })}>
-            {authState === 'signedIn' && <Home />}
-          </Authenticator>
+          <Authenticator signUpConfig={this.signUpConfig} onStateChange={this.handleStateChange} />
+          {authState === 'signedIn' && <Home />}
         </section>
       </div>
     );
