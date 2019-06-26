@@ -1,0 +1,19 @@
+{
+    "local": {
+        "awscloudformation": {
+            "AuthRoleName": "ttpstage2-local-20190625233021-authRole",
+            "UnauthRoleArn": "arn:aws:iam::508550448516:role/ttpstage2-local-20190625233021-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::508550448516:role/ttpstage2-local-20190625233021-authRole",
+            "Region": "us-east-1",
+            "DeploymentBucketName": "ttpstage2-local-20190625233021-deployment",
+            "UnauthRoleName": "ttpstage2-local-20190625233021-unauthRole",
+            "StackName": "ttpstage2-local-20190625233021",
+            "StackId": "arn:aws:cloudformation:us-east-1:508550448516:stack/ttpstage2-local-20190625233021/b7ca7860-97c2-11e9-b96f-12b4f4762c6a"
+        },
+        "categories": {
+            "auth": {
+                "ttpstage2299c8e15": {}
+            }
+        }
+    }
+}

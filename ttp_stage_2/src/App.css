@@ -1,0 +1,25 @@
+.App-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  height: 200px;
+}
+
+.App-header-text{
+  text-align: center;
+  margin-top: 5rem;
+  font-size: calc(10px + 5vmin);
+}
+
+/* AMPLIFY THEME */
+.Button__button___vS7Mv{
+  background-color: #4FB69F;
+}
+.Anchor__a___1_Iz8{
+  color: #4FB69F;
+}
+.Nav__navItem___1LtFQ{
+  font-size: calc(10px + 1vmin);
+}

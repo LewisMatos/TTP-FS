@@ -1,0 +1,10 @@
+{
+    "AppSyncApiName": "tppstagegql",
+    "DynamoDBBillingMode": "PAY_PER_REQUEST",
+    "AuthCognitoUserPoolId": {
+        "Fn::GetAtt": [
+            "authttpstage2299c8e15",
+            "Outputs.UserPoolId"
+        ]
+    }
+}
