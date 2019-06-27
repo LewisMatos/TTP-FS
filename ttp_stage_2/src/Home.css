@@ -48,3 +48,17 @@
     font-size: 1.2rem;
     margin:1rem;
 }
+
+.Home-nav{
+  display: flex;
+  flex: 1;
+  justify-content: flex-end;
+  font-size:2rem;
+}
+.Home-nav a{
+  padding: 0 1rem;
+  color:white;
+}
+.Home-nav a:first-child{
+  border-right: 1px solid white;
+}

@@ -15,6 +15,15 @@ export const createUser = `mutation CreateUser($input: CreateUserInput!) {
       }
       nextToken
     }
+    transaction {
+      items {
+        id
+        ticker
+        quantity
+        price
+      }
+      nextToken
+    }
   }
 }
 `;
@@ -24,6 +33,15 @@ export const updateUser = `mutation UpdateUser($input: UpdateUserInput!) {
     name
     cash
     stocks {
+      items {
+        id
+        ticker
+        quantity
+        price
+      }
+      nextToken
+    }
+    transaction {
       items {
         id
         ticker
@@ -49,6 +67,15 @@ export const deleteUser = `mutation DeleteUser($input: DeleteUserInput!) {
       }
       nextToken
     }
+    transaction {
+      items {
+        id
+        ticker
+        quantity
+        price
+      }
+      nextToken
+    }
   }
 }
 `;
@@ -63,6 +90,9 @@ export const createStock = `mutation CreateStock($input: CreateStockInput!) {
       name
       cash
       stocks {
+        nextToken
+      }
+      transaction {
         nextToken
       }
     }
@@ -82,6 +112,9 @@ export const updateStock = `mutation UpdateStock($input: UpdateStockInput!) {
       stocks {
         nextToken
       }
+      transaction {
+        nextToken
+      }
     }
   }
 }
@@ -97,6 +130,69 @@ export const deleteStock = `mutation DeleteStock($input: DeleteStockInput!) {
       name
       cash
       stocks {
+        nextToken
+      }
+      transaction {
+        nextToken
+      }
+    }
+  }
+}
+`;
+export const createTransaction = `mutation CreateTransaction($input: CreateTransactionInput!) {
+  createTransaction(input: $input) {
+    id
+    ticker
+    quantity
+    price
+    user {
+      id
+      name
+      cash
+      stocks {
+        nextToken
+      }
+      transaction {
+        nextToken
+      }
+    }
+  }
+}
+`;
+export const updateTransaction = `mutation UpdateTransaction($input: UpdateTransactionInput!) {
+  updateTransaction(input: $input) {
+    id
+    ticker
+    quantity
+    price
+    user {
+      id
+      name
+      cash
+      stocks {
+        nextToken
+      }
+      transaction {
+        nextToken
+      }
+    }
+  }
+}
+`;
+export const deleteTransaction = `mutation DeleteTransaction($input: DeleteTransactionInput!) {
+  deleteTransaction(input: $input) {
+    id
+    ticker
+    quantity
+    price
+    user {
+      id
+      name
+      cash
+      stocks {
+        nextToken
+      }
+      transaction {
         nextToken
       }
     }

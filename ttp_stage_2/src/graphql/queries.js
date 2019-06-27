@@ -15,6 +15,15 @@ export const getUser = `query GetUser($id: ID!) {
       }
       nextToken
     }
+    transaction {
+      items {
+        id
+        ticker
+        quantity
+        price
+      }
+      nextToken
+    }
   }
 }
 `;
@@ -29,6 +38,9 @@ export const listUsers = `query ListUsers(
       name
       cash
       stocks {
+        nextToken
+      }
+      transaction {
         nextToken
       }
     }
@@ -49,6 +61,9 @@ export const getStock = `query GetStock($id: ID!) {
       stocks {
         nextToken
       }
+      transaction {
+        nextToken
+      }
     }
   }
 }
@@ -59,6 +74,47 @@ export const listStocks = `query ListStocks(
   $nextToken: String
 ) {
   listStocks(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    items {
+      id
+      ticker
+      quantity
+      price
+      user {
+        id
+        name
+        cash
+      }
+    }
+    nextToken
+  }
+}
+`;
+export const getTransaction = `query GetTransaction($id: ID!) {
+  getTransaction(id: $id) {
+    id
+    ticker
+    quantity
+    price
+    user {
+      id
+      name
+      cash
+      stocks {
+        nextToken
+      }
+      transaction {
+        nextToken
+      }
+    }
+  }
+}
+`;
+export const listTransactions = `query ListTransactions(
+  $filter: ModelTransactionFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listTransactions(filter: $filter, limit: $limit, nextToken: $nextToken) {
     items {
       id
       ticker

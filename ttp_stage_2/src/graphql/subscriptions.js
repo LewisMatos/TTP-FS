@@ -15,6 +15,15 @@ export const onCreateUser = `subscription OnCreateUser {
       }
       nextToken
     }
+    transaction {
+      items {
+        id
+        ticker
+        quantity
+        price
+      }
+      nextToken
+    }
   }
 }
 `;
@@ -24,6 +33,15 @@ export const onUpdateUser = `subscription OnUpdateUser {
     name
     cash
     stocks {
+      items {
+        id
+        ticker
+        quantity
+        price
+      }
+      nextToken
+    }
+    transaction {
       items {
         id
         ticker
@@ -49,6 +67,15 @@ export const onDeleteUser = `subscription OnDeleteUser {
       }
       nextToken
     }
+    transaction {
+      items {
+        id
+        ticker
+        quantity
+        price
+      }
+      nextToken
+    }
   }
 }
 `;
@@ -63,6 +90,9 @@ export const onCreateStock = `subscription OnCreateStock {
       name
       cash
       stocks {
+        nextToken
+      }
+      transaction {
         nextToken
       }
     }
@@ -82,6 +112,9 @@ export const onUpdateStock = `subscription OnUpdateStock {
       stocks {
         nextToken
       }
+      transaction {
+        nextToken
+      }
     }
   }
 }
@@ -97,6 +130,69 @@ export const onDeleteStock = `subscription OnDeleteStock {
       name
       cash
       stocks {
+        nextToken
+      }
+      transaction {
+        nextToken
+      }
+    }
+  }
+}
+`;
+export const onCreateTransaction = `subscription OnCreateTransaction {
+  onCreateTransaction {
+    id
+    ticker
+    quantity
+    price
+    user {
+      id
+      name
+      cash
+      stocks {
+        nextToken
+      }
+      transaction {
+        nextToken
+      }
+    }
+  }
+}
+`;
+export const onUpdateTransaction = `subscription OnUpdateTransaction {
+  onUpdateTransaction {
+    id
+    ticker
+    quantity
+    price
+    user {
+      id
+      name
+      cash
+      stocks {
+        nextToken
+      }
+      transaction {
+        nextToken
+      }
+    }
+  }
+}
+`;
+export const onDeleteTransaction = `subscription OnDeleteTransaction {
+  onDeleteTransaction {
+    id
+    ticker
+    quantity
+    price
+    user {
+      id
+      name
+      cash
+      stocks {
+        nextToken
+      }
+      transaction {
         nextToken
       }
     }
