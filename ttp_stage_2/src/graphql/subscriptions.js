@@ -11,7 +11,9 @@ export const onCreateUser = `subscription OnCreateUser {
         id
         ticker
         quantity
-        price
+        total
+        askPrice
+        lastSalePrice
       }
       nextToken
     }
@@ -20,7 +22,7 @@ export const onCreateUser = `subscription OnCreateUser {
         id
         ticker
         quantity
-        price
+        lastSalePrice
       }
       nextToken
     }
@@ -37,7 +39,9 @@ export const onUpdateUser = `subscription OnUpdateUser {
         id
         ticker
         quantity
-        price
+        total
+        askPrice
+        lastSalePrice
       }
       nextToken
     }
@@ -46,7 +50,7 @@ export const onUpdateUser = `subscription OnUpdateUser {
         id
         ticker
         quantity
-        price
+        lastSalePrice
       }
       nextToken
     }
@@ -63,7 +67,9 @@ export const onDeleteUser = `subscription OnDeleteUser {
         id
         ticker
         quantity
-        price
+        total
+        askPrice
+        lastSalePrice
       }
       nextToken
     }
@@ -72,7 +78,7 @@ export const onDeleteUser = `subscription OnDeleteUser {
         id
         ticker
         quantity
-        price
+        lastSalePrice
       }
       nextToken
     }
@@ -84,7 +90,9 @@ export const onCreateStock = `subscription OnCreateStock {
     id
     ticker
     quantity
-    price
+    total
+    askPrice
+    lastSalePrice
     user {
       id
       name
@@ -104,7 +112,9 @@ export const onUpdateStock = `subscription OnUpdateStock {
     id
     ticker
     quantity
-    price
+    total
+    askPrice
+    lastSalePrice
     user {
       id
       name
@@ -124,7 +134,9 @@ export const onDeleteStock = `subscription OnDeleteStock {
     id
     ticker
     quantity
-    price
+    total
+    askPrice
+    lastSalePrice
     user {
       id
       name
@@ -144,7 +156,7 @@ export const onCreateTransaction = `subscription OnCreateTransaction {
     id
     ticker
     quantity
-    price
+    lastSalePrice
     user {
       id
       name
@@ -164,7 +176,7 @@ export const onUpdateTransaction = `subscription OnUpdateTransaction {
     id
     ticker
     quantity
-    price
+    lastSalePrice
     user {
       id
       name
@@ -184,7 +196,7 @@ export const onDeleteTransaction = `subscription OnDeleteTransaction {
     id
     ticker
     quantity
-    price
+    lastSalePrice
     user {
       id
       name

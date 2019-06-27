@@ -11,7 +11,9 @@ type Stock @model @auth(rules: [{allow: owner, identityField: "sub"}]){
   id: ID!
   ticker: String!
   quantity: Int!
-  price: Float!
+  total: Float!
+  askPrice: Float!
+  lastSalePrice: Float!
   user: User @connection(name: "UserStocks")
 }
 
@@ -19,6 +21,6 @@ type Transaction @model @auth(rules: [{allow: owner, identityField: "sub"}]){
   id: ID!
   ticker: String!
   quantity: Int!
-  price: Float!
+  lastSalePrice: Float!
   user: User @connection(name: "UserTransactions")
 }

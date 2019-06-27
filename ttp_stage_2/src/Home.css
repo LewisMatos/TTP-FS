@@ -1,9 +1,10 @@
 .Home-list {
   display: flex;
-  flex-flow: column;
-  width: 30vw;
+  flex-flow: column-reverse;
+  justify-content: center;
+  width: 30vmax;
   padding:0;
-  margin: 1rem 10rem;
+  margin: 1rem auto;
 }
 
 .row {
@@ -11,7 +12,7 @@
   padding: 0.5rem;
   justify-content: space-between;
   margin-top: 1rem;
-  color: white;
+  color: #ffffff;
   list-style: none;
   border-bottom: 1px solid grey;
 }
@@ -19,7 +20,7 @@
   text-align: center;
   padding: 1rem;
   font-size: 1.5rem;
-  color: white;
+  color: #A9A6A5;
 }
 .row > li:last-child {
   text-align: end;
@@ -27,26 +28,41 @@
 
 .Home-header > h1 {
   font-size: 3rem;
-  color: white;
-  width: 40rem;
-  margin: 1rem 10rem;
+  color: #ffffff;
+  margin: 1rem auto;
+  text-align: center;
 }
 
 .Home-portfolio{
     display:flex;
     flex-direction: row;
+    flex-wrap: wrap;
 }
 
 .Home-form{
     display:flex;
     flex-direction: column;
     justify-content: center;
+    width: 33vmax;
+    margin: 1rem auto;
+    padding: 4rem;
     border-left: 4px solid grey
+}
+
+.Home-form input{
+  padding: .5rem;
+
 }
 
 .Home-form  input,button{
     font-size: 1.2rem;
     margin:1rem;
+}
+
+.Home-form h1{
+  color: #ffffff;
+  font-size: 2rem;
+  text-align: center;
 }
 
 .Home-nav{
@@ -57,8 +73,24 @@
 }
 .Home-nav a{
   padding: 0 1rem;
-  color:white;
+  color:#ffffff;
 }
 .Home-nav a:first-child{
-  border-right: 1px solid white;
+  border-right: 1px solid #ffffff;
+}
+
+.Home-button {
+	background-color:#e4685d;
+	border-radius:4px;
+	border:1px solid #ffffff;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Arial;
+	font-size:1.5rem;
+	padding:.6rem 1.5rem;
+	text-decoration:none;
+}
+.Home-button:hover {
+	background-color:#688de4;
 }

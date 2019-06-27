@@ -465,7 +465,37 @@
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "price",
+          "name" : "total",
+          "description" : null,
+          "args" : [ ],
+          "type" : {
+            "kind" : "NON_NULL",
+            "name" : null,
+            "ofType" : {
+              "kind" : "SCALAR",
+              "name" : "Float",
+              "ofType" : null
+            }
+          },
+          "isDeprecated" : false,
+          "deprecationReason" : null
+        }, {
+          "name" : "askPrice",
+          "description" : null,
+          "args" : [ ],
+          "type" : {
+            "kind" : "NON_NULL",
+            "name" : null,
+            "ofType" : {
+              "kind" : "SCALAR",
+              "name" : "Float",
+              "ofType" : null
+            }
+          },
+          "isDeprecated" : false,
+          "deprecationReason" : null
+        }, {
+          "name" : "lastSalePrice",
           "description" : null,
           "args" : [ ],
           "type" : {
@@ -537,7 +567,25 @@
           },
           "defaultValue" : null
         }, {
-          "name" : "price",
+          "name" : "total",
+          "description" : null,
+          "type" : {
+            "kind" : "INPUT_OBJECT",
+            "name" : "ModelFloatFilterInput",
+            "ofType" : null
+          },
+          "defaultValue" : null
+        }, {
+          "name" : "askPrice",
+          "description" : null,
+          "type" : {
+            "kind" : "INPUT_OBJECT",
+            "name" : "ModelFloatFilterInput",
+            "ofType" : null
+          },
+          "defaultValue" : null
+        }, {
+          "name" : "lastSalePrice",
           "description" : null,
           "type" : {
             "kind" : "INPUT_OBJECT",
@@ -1082,7 +1130,7 @@
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "price",
+          "name" : "lastSalePrice",
           "description" : null,
           "args" : [ ],
           "type" : {
@@ -1145,7 +1193,7 @@
           },
           "defaultValue" : null
         }, {
-          "name" : "price",
+          "name" : "lastSalePrice",
           "description" : null,
           "type" : {
             "kind" : "INPUT_OBJECT",
@@ -1666,7 +1714,33 @@
           },
           "defaultValue" : null
         }, {
-          "name" : "price",
+          "name" : "total",
+          "description" : null,
+          "type" : {
+            "kind" : "NON_NULL",
+            "name" : null,
+            "ofType" : {
+              "kind" : "SCALAR",
+              "name" : "Float",
+              "ofType" : null
+            }
+          },
+          "defaultValue" : null
+        }, {
+          "name" : "askPrice",
+          "description" : null,
+          "type" : {
+            "kind" : "NON_NULL",
+            "name" : null,
+            "ofType" : {
+              "kind" : "SCALAR",
+              "name" : "Float",
+              "ofType" : null
+            }
+          },
+          "defaultValue" : null
+        }, {
+          "name" : "lastSalePrice",
           "description" : null,
           "type" : {
             "kind" : "NON_NULL",
@@ -1728,7 +1802,25 @@
           },
           "defaultValue" : null
         }, {
-          "name" : "price",
+          "name" : "total",
+          "description" : null,
+          "type" : {
+            "kind" : "SCALAR",
+            "name" : "Float",
+            "ofType" : null
+          },
+          "defaultValue" : null
+        }, {
+          "name" : "askPrice",
+          "description" : null,
+          "type" : {
+            "kind" : "SCALAR",
+            "name" : "Float",
+            "ofType" : null
+          },
+          "defaultValue" : null
+        }, {
+          "name" : "lastSalePrice",
           "description" : null,
           "type" : {
             "kind" : "SCALAR",
@@ -1808,7 +1900,7 @@
           },
           "defaultValue" : null
         }, {
-          "name" : "price",
+          "name" : "lastSalePrice",
           "description" : null,
           "type" : {
             "kind" : "NON_NULL",
@@ -1870,7 +1962,7 @@
           },
           "defaultValue" : null
         }, {
-          "name" : "price",
+          "name" : "lastSalePrice",
           "description" : null,
           "type" : {
             "kind" : "SCALAR",
@@ -2866,23 +2958,6 @@
         "onFragment" : false,
         "onField" : false
       }, {
-        "name" : "deprecated",
-        "description" : null,
-        "locations" : [ "FIELD_DEFINITION", "ENUM_VALUE" ],
-        "args" : [ {
-          "name" : "reason",
-          "description" : null,
-          "type" : {
-            "kind" : "SCALAR",
-            "name" : "String",
-            "ofType" : null
-          },
-          "defaultValue" : "\"No longer supported\""
-        } ],
-        "onOperation" : false,
-        "onFragment" : false,
-        "onField" : false
-      }, {
         "name" : "aws_cognito_user_pools",
         "description" : "Tells the service this field/object has access authorized by a Cognito User Pools token.",
         "locations" : [ "OBJECT", "FIELD_DEFINITION" ],
@@ -2958,6 +3033,23 @@
         "description" : "Tells the service this field/object has access authorized by sigv4 signing.",
         "locations" : [ "OBJECT", "FIELD_DEFINITION" ],
         "args" : [ ],
+        "onOperation" : false,
+        "onFragment" : false,
+        "onField" : false
+      }, {
+        "name" : "deprecated",
+        "description" : null,
+        "locations" : [ "FIELD_DEFINITION", "ENUM_VALUE" ],
+        "args" : [ {
+          "name" : "reason",
+          "description" : null,
+          "type" : {
+            "kind" : "SCALAR",
+            "name" : "String",
+            "ofType" : null
+          },
+          "defaultValue" : "\"No longer supported\""
+        } ],
         "onOperation" : false,
         "onFragment" : false,
         "onField" : false

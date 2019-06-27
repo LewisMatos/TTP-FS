@@ -11,7 +11,9 @@ export const getUser = `query GetUser($id: ID!) {
         id
         ticker
         quantity
-        price
+        total
+        askPrice
+        lastSalePrice
       }
       nextToken
     }
@@ -20,7 +22,7 @@ export const getUser = `query GetUser($id: ID!) {
         id
         ticker
         quantity
-        price
+        lastSalePrice
       }
       nextToken
     }
@@ -53,7 +55,9 @@ export const getStock = `query GetStock($id: ID!) {
     id
     ticker
     quantity
-    price
+    total
+    askPrice
+    lastSalePrice
     user {
       id
       name
@@ -78,7 +82,9 @@ export const listStocks = `query ListStocks(
       id
       ticker
       quantity
-      price
+      total
+      askPrice
+      lastSalePrice
       user {
         id
         name
@@ -94,7 +100,7 @@ export const getTransaction = `query GetTransaction($id: ID!) {
     id
     ticker
     quantity
-    price
+    lastSalePrice
     user {
       id
       name
@@ -119,7 +125,7 @@ export const listTransactions = `query ListTransactions(
       id
       ticker
       quantity
-      price
+      lastSalePrice
       user {
         id
         name

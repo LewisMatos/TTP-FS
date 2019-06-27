@@ -9,7 +9,20 @@ body {
   font-size: 62.5%
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+/* AMPLIFY THEME */
+.Button__button___vS7Mv{
+  background-color: #4FB69F;
+}
+.Anchor__a___1_Iz8{
+  color: #4FB69F;
+}
+.Nav__navItem___1LtFQ{
+  font-size: calc(10px + 1vmin);
+}
+
+.Nav__navBar___xtCFA{
+  background: none;
+  border:none;
+  border-bottom:1px solid grey;
+  color:white;
 }

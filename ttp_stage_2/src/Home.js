@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { API, graphqlOperation, Auth } from 'aws-amplify';
 import { createStock, updateStock, updateUser, createTransaction } from './graphql/mutations';
 import { getUser, listStocks, listTransactions } from './graphql/queries';
-import {onCreateTransaction} from './graphql/subscriptions'
+import { onCreateTransaction } from './graphql/subscriptions';
 import './Home.css';
 
 class Home extends Component {
@@ -10,6 +10,7 @@ class Home extends Component {
     cash: 0,
     stocks: [],
     transactions: [],
+    colors: { low: '#f20d0d', equal: '#A9A6A5', high: '#4AD847' },
     stockData: {},
     render: 'portfolio',
     ticker: '',
@@ -20,16 +21,7 @@ class Home extends Component {
   componentDidMount = async () => {
     await this.getUserCred();
     const stocks = await API.graphql(graphqlOperation(listStocks));
-    API.graphql(graphqlOperation(onCreateTransaction)).subscribe({
-      next: data =>{
-        let transactions =[
-          ...this.state.transactions, data.value.data.onCreateTransaction
-        ]
-        this.setState({transactions })
-      }
-    })
     const transactions = await API.graphql(graphqlOperation(listTransactions));
-      console.log(transactions)
     const user = await API.graphql(graphqlOperation(getUser, { id: this.state.id }));
     const { cash } = user.data.getUser;
     this.setState({
@@ -37,40 +29,79 @@ class Home extends Component {
       cash,
       transactions: transactions.data.listTransactions.items,
     });
+
+    this.createTransactionListener = API.graphql(graphqlOperation(onCreateTransaction)).subscribe({
+      next: data => {
+        let transactions = [...this.state.transactions, data.value.data.onCreateTransaction];
+        this.setState({ transactions });
+      },
+    });
+    this.performanceInterval = setInterval(async () => {
+      const { stocks, colors } = this.state;
+      if (stocks.length > 0 && stocks !== undefined) {
+        let tickers = stocks.map(stock => stock.ticker);
+        let currentStocks = await this.getStocks(tickers.join(','));
+        currentStocks.forEach((stock, id) => {
+          if (stocks[id].askPrice < stock.askPrice) {
+            stocks[id].color = colors.low;
+          } else if (stock.askPrice === stocks[id].askPrice) {
+            stocks[id].color = colors.equal;
+          } else {
+            stocks[id].color = colors.high;
+          }
+          this.setState({ stocks });
+        });
+      }
+    }, 5000);
   };
+
+  getStocks = async tickers => {
+    const endpoint = `https://cloud.iexapis.com/stable/tops?token=pk_ecbab72853cd4c92b7ccde66561abfbf&symbols=${tickers}`;
+    const response = await fetch(endpoint);
+    const data = await response.json();
+    return data;
+  };
+  componentWillUnmount() {
+    this.createTransactionListener.unsubscribe();
+    this.updateStockListener.unsubscribe();
+    clearInterval(this.performanceInterval);
+  }
 
   getUserCred = async () => {
     let user = await Auth.currentAuthenticatedUser();
     this.setState({ id: user.attributes.sub });
   };
 
-  getData = async () => {
+  getStock = async () => {
     const { ticker, quantity } = this.state;
     const endpoint = `https://cloud.iexapis.com/stable/tops?token=pk_ecbab72853cd4c92b7ccde66561abfbf&symbols=${ticker}`;
     const response = await fetch(endpoint);
     const data = await response.json();
-    const stockData = {
-      ticker: data[0].symbol,
-      price: data[0].lastSalePrice,
-      quantity,
-    };
-    this.setState({ stockData });
-    this.createStock();
+    if (data !== undefined && data.length > 0) {
+      const stockData = {
+        ticker: data[0].symbol,
+        askPrice: data[0].askPrice,
+        lastSalePrice: data[0].lastSalePrice,
+        quantity,
+      };
+      this.setState({ stockData });
+      this.createStock();
+    }
   };
 
   updateStock = async input => {
     const { stocks } = this.state;
     let res = await API.graphql(graphqlOperation(updateStock, { input }));
-    const { price, quantity, id } = res.data.updateStock;
+    const { total, quantity, id } = res.data.updateStock;
     const index = stocks.findIndex(stock => stock.id === id);
-    stocks[index] = { ...stocks[index], price, quantity };
+    stocks[index] = { ...stocks[index], total, quantity };
     this.setState({ stocks });
   };
 
   updateUser = async () => {
     const { id, stockData, cash } = this.state;
-    const { quantity, price } = stockData;
-    const total = price * quantity;
+    const { quantity, askPrice } = stockData;
+    const total = askPrice * quantity;
     if (cash > 0 && cash > total) {
       const input = {
         id,
@@ -78,16 +109,16 @@ class Home extends Component {
       };
       await API.graphql(graphqlOperation(updateUser, { input: input }));
       this.setState({
-        cash: parseInt(cash - price * quantity),
+        cash: parseInt(cash - askPrice * quantity),
       });
     }
   };
 
   createTransaction = async data => {
     const { id } = this.state;
-    const { price, ticker, quantity } = data;
+    const { lastSalePrice, ticker, quantity } = data;
     const input = {
-      price,
+      lastSalePrice: lastSalePrice,
       quantity,
       ticker,
       transactionUserId: id,
@@ -105,26 +136,30 @@ class Home extends Component {
   createStock = async () => {
     const { id, stockData, cash } = this.state;
     const foundStock = await this.stockExistsInDb();
-    const total = stockData.price * stockData.quantity;
+    const total = stockData.askPrice * stockData.quantity;
 
     if (cash >= 0 && cash > total) {
       if (foundStock) {
         //update stock
-        const { price, quantity, id } = foundStock;
-        const newPrice = stockData.price + price;
+        const { total, quantity, id, askPrice } = foundStock;
+        const newTotal = stockData.askPrice + total;
         const newQuantity = parseInt(stockData.quantity) + quantity;
         let input = {
           id,
           ticker: stockData.ticker,
           quantity: newQuantity,
-          price: newPrice,
+          total: newTotal,
+          askPrice: stockData.askPrice,
+          lastSalePrice: askPrice,
         };
         this.updateStock(input);
       } else {
         //create stock
         const input = {
           ticker: stockData.ticker,
-          price: stockData.price * stockData.quantity,
+          total: stockData.askPrice * stockData.quantity,
+          askPrice: stockData.askPrice,
+          lastSalePrice: stockData.lastSalePrice,
           stockUserId: id,
           quantity: parseInt(stockData.quantity),
         };
@@ -147,7 +182,7 @@ class Home extends Component {
 
   handleSubmit = event => {
     event.preventDefault();
-    this.getData();
+    this.getStock();
     this.setState({ ticker: '', quantity: '' });
   };
 
@@ -184,7 +219,7 @@ class Home extends Component {
                       <li>
                         BUY ({tran.ticker}) - {tran.quantity} Shares @
                       </li>
-                      <li>${tran.price.toFixed(2)}</li>
+                      <li>${tran.lastSalePrice.toFixed(2)}</li>
                     </ul>
                   );
                 })}
@@ -202,20 +237,22 @@ class Home extends Component {
                 {stocks.map((stock, id) => {
                   return (
                     <ul key={id} className="row">
-                      <li>
+                      <li style={{ color: `${stock.color}` }}>
                         {stock.ticker} - {stock.quantity} Shares
                       </li>
-                      <li>${stock.price.toFixed(2)}</li>
+                      <li style={{ color: `${stock.color}` }}>${stock.total.toFixed(2)}</li>
                     </ul>
                   );
                 })}
               </div>
+
               <form onSubmit={this.handleSubmit} className="Home-form" name="Home-form">
+                <h1>Cash - ${cash}</h1>
                 <input
                   type="text"
                   name="ticker"
                   required
-                  placeholder="ticker"
+                  placeholder="Ticker"
                   value={this.state.ticker}
                   onChange={this.handleChange}
                 />
@@ -223,11 +260,11 @@ class Home extends Component {
                   type="number"
                   name="quantity"
                   required
-                  placeholder="quantity"
+                  placeholder="Quantity"
                   value={this.state.quantity}
                   onChange={this.handleChange}
                 />
-                <button type="submit"> SUBMIT </button>
+                <button className="Home-button" type="submit"> BUY </button>
               </form>
             </div>
           </div>
