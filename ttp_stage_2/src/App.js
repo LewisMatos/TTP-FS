@@ -3,7 +3,7 @@ import { Authenticator } from 'aws-amplify-react';
 import { API, graphqlOperation } from 'aws-amplify';
 import { createUser } from './graphql/mutations';
 import { getUser } from './graphql/queries';
-import Home from './Home';
+import Home from './pages/home/Home';
 import './App.css';
 
 class App extends Component {

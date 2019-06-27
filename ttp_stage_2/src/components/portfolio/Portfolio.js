@@ -1,15 +1,12 @@
 import React, { Component } from 'react';
 import { API, graphqlOperation, Auth } from 'aws-amplify';
-import { createStock, updateStock, updateUser, createTransaction } from './graphql/mutations';
-import { getUser, listStocks, listTransactions } from './graphql/queries';
-import { onCreateTransaction } from './graphql/subscriptions';
-import './Home.css';
+import { createStock, updateStock, updateUser, createTransaction } from '../../graphql/mutations';
+import { getUser, listStocks } from '../../graphql/queries';
 
-class Home extends Component {
+class Portfolio extends Component {
   state = {
     cash: 0,
     stocks: [],
-    transactions: [],
     colors: { low: '#f20d0d', equal: '#A9A6A5', high: '#4AD847' },
     stockData: {},
     render: 'portfolio',
@@ -17,25 +14,16 @@ class Home extends Component {
     quantity: '',
     id: '',
   };
-
   componentDidMount = async () => {
     await this.getUserCred();
     const stocks = await API.graphql(graphqlOperation(listStocks));
-    const transactions = await API.graphql(graphqlOperation(listTransactions));
     const user = await API.graphql(graphqlOperation(getUser, { id: this.state.id }));
     const { cash } = user.data.getUser;
     this.setState({
       stocks: stocks.data.listStocks.items,
       cash,
-      transactions: transactions.data.listTransactions.items,
     });
 
-    this.createTransactionListener = API.graphql(graphqlOperation(onCreateTransaction)).subscribe({
-      next: data => {
-        let transactions = [...this.state.transactions, data.value.data.onCreateTransaction];
-        this.setState({ transactions });
-      },
-    });
     this.performanceInterval = setInterval(async () => {
       const { stocks, colors } = this.state;
       if (stocks.length > 0 && stocks !== undefined) {
@@ -62,8 +50,6 @@ class Home extends Component {
     return data;
   };
   componentWillUnmount() {
-    this.createTransactionListener.unsubscribe();
-    this.updateStockListener.unsubscribe();
     clearInterval(this.performanceInterval);
   }
 
@@ -195,83 +181,52 @@ class Home extends Component {
   };
 
   render() {
-    const { cash, stocks, transactions, render } = this.state;
+    const { stocks, cash } = this.state;
     return (
       <div>
-        <nav className="Home-nav">
-          <a onClick={this.handleClick} name="portfolio" href="#!">
-            Portfolio
-          </a>
-          <a onClick={this.handleClick} name="transaction" href="#!">
-            Transactions
-          </a>
-        </nav>
-        {render === 'transaction' && (
-          <div className="Home-transaction">
-            <div className="Home-header">
-              <h1>Transaction </h1>
-            </div>
-            <div className="Home-portfolio">
-              <div className="Home-list">
-                {transactions.map((tran, id) => {
-                  return (
-                    <ul key={id} className="row">
-                      <li>
-                        BUY ({tran.ticker}) - {tran.quantity} Shares @
-                      </li>
-                      <li>${tran.lastSalePrice.toFixed(2)}</li>
-                    </ul>
-                  );
-                })}
-              </div>
-            </div>
+        <div className="Home-header">
+          <h1>Portfolio (${cash})</h1>
+        </div>
+        <div className="Home-portfolio">
+          <div className="Home-list">
+            {stocks.map((stock, id) => {
+              return (
+                <ul key={stock.id} className="row">
+                  <li style={{ color: `${stock.color}` }}>
+                    {stock.ticker} - {stock.quantity} Shares
+                  </li>
+                  <li style={{ color: `${stock.color}` }}>${stock.total.toFixed(2)}</li>
+                </ul>
+              );
+            })}
           </div>
-        )}
-        {render === 'portfolio' && (
-          <div>
-            <div className="Home-header">
-              <h1>Portfolio (${cash})</h1>
-            </div>
-            <div className="Home-portfolio">
-              <div className="Home-list">
-                {stocks.map((stock, id) => {
-                  return (
-                    <ul key={id} className="row">
-                      <li style={{ color: `${stock.color}` }}>
-                        {stock.ticker} - {stock.quantity} Shares
-                      </li>
-                      <li style={{ color: `${stock.color}` }}>${stock.total.toFixed(2)}</li>
-                    </ul>
-                  );
-                })}
-              </div>
 
-              <form onSubmit={this.handleSubmit} className="Home-form" name="Home-form">
-                <h1>Cash - ${cash}</h1>
-                <input
-                  type="text"
-                  name="ticker"
-                  required
-                  placeholder="Ticker"
-                  value={this.state.ticker}
-                  onChange={this.handleChange}
-                />
-                <input
-                  type="number"
-                  name="quantity"
-                  required
-                  placeholder="Quantity"
-                  value={this.state.quantity}
-                  onChange={this.handleChange}
-                />
-                <button className="Home-button" type="submit"> BUY </button>
-              </form>
-            </div>
-          </div>
-        )}
+          <form onSubmit={this.handleSubmit} className="Home-form" name="Home-form">
+            <h1>Cash - ${cash}</h1>
+            <input
+              type="text"
+              name="ticker"
+              required
+              placeholder="Ticker"
+              value={this.state.ticker}
+              onChange={this.handleChange}
+            />
+            <input
+              type="number"
+              name="quantity"
+              required
+              placeholder="Quantity"
+              value={this.state.quantity}
+              onChange={this.handleChange}
+            />
+            <button className="Home-button" type="submit">
+              BUY
+            </button>
+          </form>
+        </div>
       </div>
     );
   }
 }
 
-export default Home;
+export default Portfolio;
