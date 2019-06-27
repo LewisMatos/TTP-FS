@@ -1,4 +1,5 @@
 type User @model @auth(rules: [{allow: owner, identityField: "sub"}]) {
+  id: ID!
   name: String!
   cash: Int!
   stocks: [Stock] @connection(name: "UserStocks")
@@ -6,8 +7,9 @@ type User @model @auth(rules: [{allow: owner, identityField: "sub"}]) {
 
 
 type Stock @model @auth(rules: [{allow: owner, identityField: "sub"}]){
+  id: ID!
   ticker: String!
   quantity: Int!
-  price: Int!
+  price: Float!
   user: User @connection(name: "UserStocks")
 }
