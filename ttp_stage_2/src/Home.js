@@ -3,6 +3,7 @@ import { API, graphqlOperation, Auth } from 'aws-amplify';
 import { createStock, updateStock, updateUser } from './graphql/mutations';
 import { getUser, listStocks } from './graphql/queries';
 import './Home.css';
+import { async } from 'q';
 
 class Home extends Component {
   state = {
@@ -40,8 +41,41 @@ class Home extends Component {
     this.createStock();
   };
 
+  updateStock = async input => {
+    const { stocks } = this.state;
+    let data = await API.graphql(graphqlOperation(updateStock, { input }));
+    let index = stocks.findIndex(stock => stock.id === data.data.updateStock.id);
+    const { price, quantity } = data.data.updateStock;
+    stocks[index] = { ...stocks[index], price, quantity };
+    this.setState({ stocks });
+  };
+
+  updateUser = async () => {
+    const { id, data, cash } = this.state;
+    const { quantity, price } = data;
+    if (cash > 0 && cash > price * quantity) {
+      const input = {
+        id,
+        cash: parseInt(cash - price * quantity),
+      };
+      await API.graphql(graphqlOperation(updateUser, { input: input }));
+
+      console.log(cash);
+      this.setState({
+        cash: parseInt(cash - price * quantity),
+      });
+    }
+  };
+
+  checkStockExists = async () => {
+    const { id, data } = this.state;
+    const { ticker } = data;
+    const stock = await API.graphql(graphqlOperation(getUser, { id })); //check db for stock
+    return stock.data.getUser.stocks.items.find(item => item.ticker === ticker);
+  };
+
   createStock = async () => {
-    const { id, data, cash, stocks } = this.state;
+    const { id, data, cash } = this.state;
     const { ticker, quantity, price } = data;
     const input = {
       ticker,
@@ -49,47 +83,30 @@ class Home extends Component {
       stockUserId: id,
       quantity: parseInt(quantity),
     };
-    const stock = await API.graphql(graphqlOperation(getUser, { id })); //check db for stock
-    let foundStock = stock.data.getUser.stocks.items.find(item => item.ticker === ticker);
-    //update or create stock
-    if (foundStock) {
-      {
+    let foundStock = await this.checkStockExists();
+    if (cash >= 0 && cash > data.price * quantity) {
+      if (foundStock) {
+        //update stock
         const { price, quantity, id } = foundStock;
-        const newPrice = input.price + price;
-        const newQuantity = input.quantity + quantity;
+        const newPrice = data.price + price;
+        const newQuantity = data.quantity + quantity;
         const updatedInput = {
           id,
           ticker,
           quantity: newQuantity,
           price: newPrice,
         };
-        if (cash >= 0 && cash > (data.price * quantity)) {
-          let data = await API.graphql(graphqlOperation(updateStock, { input: updatedInput }));
-          let index = stocks.findIndex(stock => stock.id === data.data.updateStock.id);
-          const { price, quantity } = data.data.updateStock;
-          stocks[index] = { ...stocks[index], price, quantity };
+        this.updateStock(updatedInput);
+      } else {
+        //create stock
+        // if (cash >= 0 && cash > price * quantity) {
+          let data = await API.graphql(graphqlOperation(createStock, { input }));
+          const stocks = [...this.state.stocks, data.data.createStock];
           this.setState({ stocks });
-        }
-      }
-    } else {
-      if (cash >= 0 && cash > (price * quantity)) {
-        let data = await API.graphql(graphqlOperation(createStock, { input }));
-        const stocks = [...this.state.stocks, data.data.createStock];
-        this.setState({ stocks });
+        // }
       }
     }
-    if (cash > 0 && cash > (price * quantity)) {
-      const input = {
-        id,
-        cash: parseInt(cash - price * quantity),
-      };
-      await API.graphql(graphqlOperation(updateUser, { input: input }));
-
-    console.log(cash);
-    this.setState({
-      cash: parseInt(cash - price * quantity),
-    });
-  }
+    await this.updateUser();
   };
 
   handleChange = event => {
