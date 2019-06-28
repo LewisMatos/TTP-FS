@@ -21,6 +21,7 @@ type Transaction @model @auth(rules: [{allow: owner, identityField: "sub"}]){
   id: ID!
   ticker: String!
   quantity: Int!
+  askPrice: Float!
   lastSalePrice: Float!
   user: User @connection(name: "UserTransactions")
 }

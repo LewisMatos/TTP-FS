@@ -3,6 +3,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  font-family: 'Pacifico', cursive;
   color: white;
   height: 200px;
 }
@@ -12,3 +13,33 @@
   margin-top: 5rem;
   font-size: calc(10px + 5vmin);
 }
+
+/* AMPLIFY THEME */
+
+.Section__container___3YYTG {
+  margin-bottom: 1rem;
+}
+
+.Nav__navRight___1QG2J {
+  font-family: Pacifico;
+}
+
+.Button__button___vS7Mv {
+  background-color: #616866;
+  margin: 0.5rem;
+}
+.Anchor__a___1_Iz8 {
+  color: #939796;
+}
+.Nav__navItem___1LtFQ {
+  font-size: calc(10px + 1vmin);
+}
+
+.Nav__navBar___xtCFA {
+  background: none;
+  border: none;
+  border-bottom: 1px solid grey;
+  color: white;
+}
+
+/* END AMPLIFY THEME */

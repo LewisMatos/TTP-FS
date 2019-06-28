@@ -22,6 +22,7 @@ export const createUser = `mutation CreateUser($input: CreateUserInput!) {
         id
         ticker
         quantity
+        askPrice
         lastSalePrice
       }
       nextToken
@@ -50,6 +51,7 @@ export const updateUser = `mutation UpdateUser($input: UpdateUserInput!) {
         id
         ticker
         quantity
+        askPrice
         lastSalePrice
       }
       nextToken
@@ -78,6 +80,7 @@ export const deleteUser = `mutation DeleteUser($input: DeleteUserInput!) {
         id
         ticker
         quantity
+        askPrice
         lastSalePrice
       }
       nextToken
@@ -156,6 +159,7 @@ export const createTransaction = `mutation CreateTransaction($input: CreateTrans
     id
     ticker
     quantity
+    askPrice
     lastSalePrice
     user {
       id
@@ -176,6 +180,7 @@ export const updateTransaction = `mutation UpdateTransaction($input: UpdateTrans
     id
     ticker
     quantity
+    askPrice
     lastSalePrice
     user {
       id
@@ -196,6 +201,7 @@ export const deleteTransaction = `mutation DeleteTransaction($input: DeleteTrans
     id
     ticker
     quantity
+    askPrice
     lastSalePrice
     user {
       id

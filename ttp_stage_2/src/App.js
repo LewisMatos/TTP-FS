@@ -50,7 +50,6 @@ class App extends Component {
   };
 
   signUpConfig = {
-    header: 'My Customized Sign Up',
     hideAllDefaults: true,
     defaultCountryCode: '1',
     signUpFields: [
@@ -85,7 +84,7 @@ class App extends Component {
         <section>
           {authState !== 'signedIn' && (
             <div className="App-header">
-              <div className="App-header-text"> Stock Portfolio </div>
+              <div className="App-header-text"> StockApp </div>
             </div>
           )}
           <Authenticator signUpConfig={this.signUpConfig} onStateChange={this.handleStateChange} />

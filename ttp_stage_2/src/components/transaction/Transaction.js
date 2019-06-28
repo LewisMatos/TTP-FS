@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { API, graphqlOperation } from 'aws-amplify';
 import { listTransactions } from '../../graphql/queries';
 import { onCreateTransaction } from '../../graphql/subscriptions';
+import Table from '../table/Table'
 
 class Transaction extends Component {
   state = {
@@ -34,16 +35,7 @@ class Transaction extends Component {
         </div>
         <div className="Home-portfolio">
           <div className="Home-list">
-            {transactions.map((transaction, id) => {
-              return (
-                <ul key={transaction.id} className="row">
-                  <li>
-                    BUY ({transaction.ticker}) - {transaction.quantity} Shares @
-                  </li>
-                  <li>${transaction.lastSalePrice.toFixed(2)}</li>
-                </ul>
-              );
-            })}
+            <Table items={transactions} />
           </div>
         </div>
       </div>

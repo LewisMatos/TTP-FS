@@ -22,6 +22,7 @@ export const getUser = `query GetUser($id: ID!) {
         id
         ticker
         quantity
+        askPrice
         lastSalePrice
       }
       nextToken
@@ -100,6 +101,7 @@ export const getTransaction = `query GetTransaction($id: ID!) {
     id
     ticker
     quantity
+    askPrice
     lastSalePrice
     user {
       id
@@ -125,6 +127,7 @@ export const listTransactions = `query ListTransactions(
       id
       ticker
       quantity
+      askPrice
       lastSalePrice
       user {
         id

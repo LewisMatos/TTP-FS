@@ -2,12 +2,13 @@ import React, { Component } from 'react';
 import { API, graphqlOperation, Auth } from 'aws-amplify';
 import { createStock, updateStock, updateUser, createTransaction } from '../../graphql/mutations';
 import { getUser, listStocks } from '../../graphql/queries';
+import Table from '../table/Table';
 
 class Portfolio extends Component {
   state = {
     cash: 0,
     stocks: [],
-    colors: { low: '#f20d0d', equal: '#A9A6A5', high: '#4AD847' },
+    colors: { low: '#f20d0d', equal: '#5e5c5b', high: '#4AD847' },
     stockData: {},
     render: 'portfolio',
     ticker: '',
@@ -29,14 +30,17 @@ class Portfolio extends Component {
       if (stocks.length > 0 && stocks !== undefined) {
         let tickers = stocks.map(stock => stock.ticker);
         let currentStocks = await this.getStocks(tickers.join(','));
-        currentStocks.forEach((stock, id) => {
-          if (stocks[id].askPrice < stock.askPrice) {
-            stocks[id].color = colors.low;
-          } else if (stock.askPrice === stocks[id].askPrice) {
+        currentStocks.forEach((currentStock, id) => {
+          currentStock.askPrice = Math.floor(Math.random() * 500) + 1;
+          console.log(stocks[id].lastSalePrice, currentStock.askPrice);
+          if (currentStock.askPrice > stocks[id].lastSalePrice) {
+            stocks[id].color = colors.high;
+          } else if (currentStock.askPrice === stocks[id].lastSalePrice) {
             stocks[id].color = colors.equal;
           } else {
-            stocks[id].color = colors.high;
+            stocks[id].color = colors.low;
           }
+          stocks[id].askPrice = currentStock.askPrice;
           this.setState({ stocks });
         });
       }
@@ -64,19 +68,24 @@ class Portfolio extends Component {
     const response = await fetch(endpoint);
     const data = await response.json();
     if (data !== undefined && data.length > 0) {
+      // if (data[0].askPrice > 0) {
       const stockData = {
         ticker: data[0].symbol,
-        askPrice: data[0].askPrice,
+        //Testing market closure
+        // askPrice: data[0].askPrice,
+        askPrice: data[0].lastSalePrice,
         lastSalePrice: data[0].lastSalePrice,
         quantity,
       };
       this.setState({ stockData });
       this.createStock();
+      // }
     }
   };
 
   updateStock = async input => {
     const { stocks } = this.state;
+
     let res = await API.graphql(graphqlOperation(updateStock, { input }));
     const { total, quantity, id } = res.data.updateStock;
     const index = stocks.findIndex(stock => stock.id === id);
@@ -102,9 +111,10 @@ class Portfolio extends Component {
 
   createTransaction = async data => {
     const { id } = this.state;
-    const { lastSalePrice, ticker, quantity } = data;
+    const { lastSalePrice, ticker, quantity, askPrice } = data;
     const input = {
-      lastSalePrice: lastSalePrice,
+      askPrice,
+      lastSalePrice,
       quantity,
       ticker,
       transactionUserId: id,
@@ -189,16 +199,7 @@ class Portfolio extends Component {
         </div>
         <div className="Home-portfolio">
           <div className="Home-list">
-            {stocks.map((stock, id) => {
-              return (
-                <ul key={stock.id} className="row">
-                  <li style={{ color: `${stock.color}` }}>
-                    {stock.ticker} - {stock.quantity} Shares
-                  </li>
-                  <li style={{ color: `${stock.color}` }}>${stock.total.toFixed(2)}</li>
-                </ul>
-              );
-            })}
+            <Table items={stocks} />
           </div>
 
           <form onSubmit={this.handleSubmit} className="Home-form" name="Home-form">

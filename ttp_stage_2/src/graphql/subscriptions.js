@@ -22,6 +22,7 @@ export const onCreateUser = `subscription OnCreateUser {
         id
         ticker
         quantity
+        askPrice
         lastSalePrice
       }
       nextToken
@@ -50,6 +51,7 @@ export const onUpdateUser = `subscription OnUpdateUser {
         id
         ticker
         quantity
+        askPrice
         lastSalePrice
       }
       nextToken
@@ -78,6 +80,7 @@ export const onDeleteUser = `subscription OnDeleteUser {
         id
         ticker
         quantity
+        askPrice
         lastSalePrice
       }
       nextToken
@@ -156,6 +159,7 @@ export const onCreateTransaction = `subscription OnCreateTransaction {
     id
     ticker
     quantity
+    askPrice
     lastSalePrice
     user {
       id
@@ -176,6 +180,7 @@ export const onUpdateTransaction = `subscription OnUpdateTransaction {
     id
     ticker
     quantity
+    askPrice
     lastSalePrice
     user {
       id
@@ -196,6 +201,7 @@ export const onDeleteTransaction = `subscription OnDeleteTransaction {
     id
     ticker
     quantity
+    askPrice
     lastSalePrice
     user {
       id
