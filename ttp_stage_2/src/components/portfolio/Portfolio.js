@@ -5,7 +5,6 @@ import { getUser, listStocks } from '../../graphql/queries';
 import Table from '../table/Table';
 
 class Portfolio extends Component {
-
   state = {
     cash: 0,
     stocks: [],
@@ -71,17 +70,18 @@ class Portfolio extends Component {
     const stock = await response.json();
     if (stock !== undefined && stock.length > 0) {
       if (stock[0].askPrice > 0) {
-      const stockData = {
-        ticker: stock[0].symbol,
-        askPrice: stock[0].askPrice,
-        lastSalePrice: stock[0].lastSalePrice,
-        quantity,
-      };
-      this.setState({ stockData });
-      this.createOrUpdateStock();
+        const stockData = {
+          ticker: stock[0].symbol,
+          askPrice: stock[0].askPrice,
+          lastSalePrice: stock[0].lastSalePrice,
+          quantity,
+        };
+        this.setState({ stockData });
+        this.createOrUpdateStock();
       }
     }
   };
+
   createStock = async input => {
     let { stocks } = this.state;
     let res = await API.graphql(graphqlOperation(createStock, { input }));
@@ -157,7 +157,7 @@ class Portfolio extends Component {
       } else {
         //create stock
         const total = stockData.askPrice * stockData.quantity;
-        const{ticker,askPrice,lastSalePrice} = stockData;
+        const { ticker, askPrice, lastSalePrice } = stockData;
         const input = {
           ticker,
           total,
