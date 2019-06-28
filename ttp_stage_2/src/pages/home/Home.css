@@ -80,6 +80,7 @@ button {
   display: flex;
   flex-flow: row wrap;
   border-left: solid 1px #d9d9d9;
+  background: white;
   transition: 0.5s;
 }
 .flex-table:first-of-type {
@@ -139,6 +140,9 @@ button {
 
   .column {
     width: 100%;
+  }
+  .Home-form{
+    border:none;
   }
 }
 @media all and (max-width: 430px) {

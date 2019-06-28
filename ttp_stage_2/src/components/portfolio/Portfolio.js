@@ -5,6 +5,7 @@ import { getUser, listStocks } from '../../graphql/queries';
 import Table from '../table/Table';
 
 class Portfolio extends Component {
+
   state = {
     cash: 0,
     stocks: [],
@@ -15,6 +16,7 @@ class Portfolio extends Component {
     quantity: '',
     id: '',
   };
+
   componentDidMount = async () => {
     await this.getUserCred();
     const stocks = await API.graphql(graphqlOperation(listStocks));
@@ -25,14 +27,13 @@ class Portfolio extends Component {
       cash,
     });
 
+    //Update market ask price
     this.performanceInterval = setInterval(async () => {
       const { stocks, colors } = this.state;
       if (stocks.length > 0 && stocks !== undefined) {
         let tickers = stocks.map(stock => stock.ticker);
         let currentStocks = await this.getStocks(tickers.join(','));
         currentStocks.forEach((currentStock, id) => {
-          currentStock.askPrice = Math.floor(Math.random() * 500) + 1;
-          console.log(stocks[id].lastSalePrice, currentStock.askPrice);
           if (currentStock.askPrice > stocks[id].lastSalePrice) {
             stocks[id].color = colors.high;
           } else if (currentStock.askPrice === stocks[id].lastSalePrice) {
@@ -44,18 +45,19 @@ class Portfolio extends Component {
           this.setState({ stocks });
         });
       }
-    }, 5000);
+    }, 2000);
   };
+
+  componentWillUnmount() {
+    clearInterval(this.performanceInterval);
+  }
 
   getStocks = async tickers => {
     const endpoint = `https://cloud.iexapis.com/stable/tops?token=pk_ecbab72853cd4c92b7ccde66561abfbf&symbols=${tickers}`;
     const response = await fetch(endpoint);
-    const data = await response.json();
-    return data;
+    const stocks = await response.json();
+    return stocks;
   };
-  componentWillUnmount() {
-    clearInterval(this.performanceInterval);
-  }
 
   getUserCred = async () => {
     let user = await Auth.currentAuthenticatedUser();
@@ -66,26 +68,29 @@ class Portfolio extends Component {
     const { ticker, quantity } = this.state;
     const endpoint = `https://cloud.iexapis.com/stable/tops?token=pk_ecbab72853cd4c92b7ccde66561abfbf&symbols=${ticker}`;
     const response = await fetch(endpoint);
-    const data = await response.json();
-    if (data !== undefined && data.length > 0) {
-      // if (data[0].askPrice > 0) {
+    const stock = await response.json();
+    if (stock !== undefined && stock.length > 0) {
+      if (stock[0].askPrice > 0) {
       const stockData = {
-        ticker: data[0].symbol,
-        //Testing market closure
-        // askPrice: data[0].askPrice,
-        askPrice: data[0].lastSalePrice,
-        lastSalePrice: data[0].lastSalePrice,
+        ticker: stock[0].symbol,
+        askPrice: stock[0].askPrice,
+        lastSalePrice: stock[0].lastSalePrice,
         quantity,
       };
       this.setState({ stockData });
-      this.createStock();
-      // }
+      this.createOrUpdateStock();
+      }
     }
+  };
+  createStock = async input => {
+    let { stocks } = this.state;
+    let res = await API.graphql(graphqlOperation(createStock, { input }));
+    stocks = [...stocks, res.data.createStock];
+    this.setState({ stocks });
   };
 
   updateStock = async input => {
     const { stocks } = this.state;
-
     let res = await API.graphql(graphqlOperation(updateStock, { input }));
     const { total, quantity, id } = res.data.updateStock;
     const index = stocks.findIndex(stock => stock.id === id);
@@ -93,7 +98,7 @@ class Portfolio extends Component {
     this.setState({ stocks });
   };
 
-  updateUser = async () => {
+  updateUserCash = async () => {
     const { id, stockData, cash } = this.state;
     const { quantity, askPrice } = stockData;
     const total = askPrice * quantity;
@@ -129,7 +134,7 @@ class Portfolio extends Component {
     return res.data.getUser.stocks.items.find(item => item.ticker === ticker);
   };
 
-  createStock = async () => {
+  createOrUpdateStock = async () => {
     const { id, stockData, cash } = this.state;
     const foundStock = await this.stockExistsInDb();
     const total = stockData.askPrice * stockData.quantity;
@@ -151,21 +156,21 @@ class Portfolio extends Component {
         this.updateStock(input);
       } else {
         //create stock
+        const total = stockData.askPrice * stockData.quantity;
+        const{ticker,askPrice,lastSalePrice} = stockData;
         const input = {
-          ticker: stockData.ticker,
-          total: stockData.askPrice * stockData.quantity,
-          askPrice: stockData.askPrice,
-          lastSalePrice: stockData.lastSalePrice,
+          ticker,
+          total,
+          askPrice,
+          lastSalePrice,
           stockUserId: id,
           quantity: parseInt(stockData.quantity),
         };
-        let res = await API.graphql(graphqlOperation(createStock, { input }));
-        const stocks = [...this.state.stocks, res.data.createStock];
-        this.setState({ stocks });
+        this.createStock(input);
       }
       this.createTransaction(stockData);
+      this.updateUserCash();
     }
-    this.updateUser();
   };
 
   handleChange = event => {
